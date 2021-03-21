@@ -20,6 +20,7 @@ feature -- Test routines
 			l_map: TREE_MAP [STRING, STRING]
 		do
 			create l_map.make ("M")
+			
 		end
 
 end
