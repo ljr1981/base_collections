@@ -1,7 +1,8 @@
 note
 	description: "Objects mapped within a Binary Tree."
 	EIS: "name=design_guidance", "src=https://www.baeldung.com/java-treemap"
-	
+	EIS: "name=requirements", "src=$(system_path)/docs/requirements.odt"
+
 class
 	TREE_MAP [G -> COMPARABLE, K -> HASHABLE]
 
