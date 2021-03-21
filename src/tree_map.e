@@ -16,10 +16,18 @@ inherit
 create
 	make
 
+feature -- Queries
+
+	get, items: ARRAYED_LIST [G]
+			-- `get' `items' of Current as a list.
+		do
+			create Result.make (count)
+		end
+
 feature -- Basic Ops
 
-	put (v: G)
-			--
+	put, add (v: G)
+			--`put' or `add' an item `v' into Current.
 		do
 			if has (v) then
 				-- We already have a `v' (ignore it?)
