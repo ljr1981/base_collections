@@ -70,8 +70,6 @@ feature -- Test routines
 			assert_integers_equal ("child_Z_index", 2, l_map.child_index)
 			assert_strings_equal ("Z_node", "Z", l_map.child_item)
 			assert_integers_equal ("count_with_new_B_and_space", 5, l_map.count)
-				-- CONCLUSION(S): Wow! Interesting
-				-- 1)
 
 			across
 				l_map.linear_representation as ic
@@ -82,6 +80,21 @@ feature -- Test routines
 			end
 			assert_integers_equal ("counts_same", l_map.count, l_total_tree.count)
 			assert_strings_equal ("all_items", "MA BZ", l_total_tree)
+				-- CONCLUSION(S): Wow! Interesting
+				--	1) A map.count starting at root will count all nodes, root down.
+				--	2) A child_map.count will count all nodes from the child, down.
+				--	3) Each node has but (potential) left-right child.
+				--	4) Therefore, each node has count of 1, 2, 3 in terms of immediate self + children
+				--	5) The across-loop reveals that linear-traversal is easy, but not "natural order"
+				--	6) Natural order will come by "tracing" the tree (e.g. "MA BZ" -> " ABMZ")
+				--	7) Locating an "insertion-point" will not use "tracing", but different mechanism.
+				--	8) Insert-loc will start at root and look left-right and follow --> insert-point
+				--	9) Insert-point will be either:
+				--		a) missing left-or-right leaf
+				--		b) splice-in between a less-than left-child and less-than parent
+				--		c) splice-in between a greater-then right-child and less-than parent
+				--		EXAMPLE: "Q" goes splices between "M" (less-than parent)
+				--					and "Z" (greater-than child of "M")
 		end
 
 feature {NONE} -- Test Support
