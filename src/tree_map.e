@@ -47,7 +47,10 @@ feature -- Basic Ops
 			G_typed: attached {G} v xor attached {TO_SPECIAL [G]} v
 		do
 			if attached {G} v as al_item then -- adding single item
+
 				-- add item
+				-- Here is where we will search for an `insertion_point' strategy!!!
+
 			elseif attached {TO_SPECIAL [G]} v as al_special then -- adding a list of items
 				if attached {ARRAY [G]} al_special as ic then
 					across ic as ic_array loop put (ic_array.item) end
@@ -65,6 +68,7 @@ feature -- Basic Ops
 
 	put_left_child (v: like Current)
 			--<Precursor>
+			-- Redef includes adding to our `local_key_hash'.
 		do
 			Precursor (v)
 			check hashable: attached {HASHABLE} v.item as al_hash then
@@ -74,6 +78,7 @@ feature -- Basic Ops
 
 	put_right_child (v: like Current)
 			--<Precursor>
+			-- Redef includes adding to our `local_key_hash'.
 		do
 			Precursor (v)
 			check hashable: attached {HASHABLE} v.item as al_hash then
@@ -81,32 +86,26 @@ feature -- Basic Ops
 			end
 		end
 
-feature {NONE} -- Imp: Queries
-
-	is_less_and_no_left_child (a_new: G): BOOLEAN
-			-- Is `a_new' < `item' and `item' has no `left_child'?
-		do
-			Result := item.is_greater (a_new) and then
-						not attached left_child
-		end
-
-	is_greater_and_no_right_child (a_new: G): BOOLEAN
-			-- Is `a_new' > `item' and `item' has no `right_child'?
-		do
-			Result := item.is_less (a_new) and then
-						not attached right_child
-		end
-
 feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 
 	local_key_hash: HASH_TABLE [like Current, HASHABLE]
 			-- Keys for this node only (root + left + right)
+		note
+			design: "[
+				We only need the key:value pair for left and right child.
+				We always include the root (parent of left and right).
+				]"
 		attribute
 			create Result.make (count)
 		end
 
 	local_key_value_pairs: ARRAYED_LIST [TUPLE [value: like Current; key: HASHABLE]]
 			-- List of local key:value pairs.
+		note
+			use_case: "[
+				The goal here is to have an easy list of key:value pairs so our
+				parent node can build its `all_key_hash' and `all_items_sorted' lists.
+				]"
 		do
 			create Result.make (local_key_hash.count)
 			from
@@ -121,6 +120,14 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 
 	all_key_hash: like local_key_hash
 			-- All keys for all nodes and children, recursively.
+		note
+			use_case: "[
+				The goal here is to create a hashmapped list of all
+				nodes in the tree where: key=item-hash-code value=node-reference
+				
+				Later, we will look up the value node-ref by the key item-hash,
+				which will fetch our target insertion node (see `all_items_sorted').
+				]"
 		do
 			Result := local_key_hash
 			if attached left_child as al_left_child then
@@ -137,6 +144,20 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 
 	all_items_sorted: PART_SORTED_TWO_WAY_LIST [G]
 			-- A sorted list of all {G} items in Current.
+		note
+			use_case: "[
+				The goal of this feature is a list that we can
+				bracket-search (binary bracketing) to locate a one of three outcomes:
+				1) the candidate is < our lowest list item.
+				2) the candidate is > our highest list item.
+				3) the candidate is between two list items (item-lesser < candidate > item-greater)
+				
+				Therefore, this is where we will get our target, which is one of four:
+				1) lowest-item
+				2) greatest-item
+				3) item-lesser
+				4) item-greater
+				]"
 		do
 			create Result.make
 			across
@@ -147,6 +168,7 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 		end
 
 	insertion_point (a_candidate_item: G): TUPLE [target_node: like Current; strategy_code: INTEGER]
+			-- Where do we insert `a_candidate_item' and what strategy do we use?
 		do
 			create Result
 				-- code here for determining `insertion_point' strategy
