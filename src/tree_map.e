@@ -45,12 +45,27 @@ feature -- Basic Ops
 			--`put' or `add' an item `v' into Current.
 		require
 			G_typed: attached {G} v xor attached {TO_SPECIAL [G]} v
+		local
+			l_insertion: like insertion_point
 		do
 			if attached {G} v as al_item then -- adding single item
-
-				-- add item
-				-- Here is where we will search for an `insertion_point' strategy!!!
-
+				if attached insertion_point (al_item) as al_insertion then
+					inspect
+						al_insertion.strategy_code
+					when is_left_child then
+						-- left_child of al_insertion.target_node
+					when is_right_child then
+						-- right_child of al_insertion.target_node
+					when is_splice_above then
+						-- splice-above al_insertion.target_node
+					when is_splice_below_left then
+						-- splice-below al_insertion.target_node
+					when is_splice_below_right then
+						-- splice-below al_insertion.target_node
+					else
+						check unknown_strategy: False end
+					end
+				end
 			elseif attached {TO_SPECIAL [G]} v as al_special then -- adding a list of items
 				if attached {ARRAY [G]} al_special as ic then
 					across ic as ic_array loop put (ic_array.item) end
@@ -167,32 +182,73 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 			end
 		end
 
-	insertion_point (a_candidate_item: G): TUPLE [target_node: like Current; strategy_code: INTEGER]
+	insertion_point (a_candidate_item: G): detachable TUPLE [target_node: like Current; strategy_code: INTEGER]
 			-- Where do we insert `a_candidate_item' and what strategy do we use?
+		local
+			l_items: like all_items_sorted
+			l_greater_than: detachable G
+			i: INTEGER
 		do
-			create Result
+			l_items := all_items_sorted
+
 				-- code here for determining `insertion_point' strategy
+			from
+				l_items.start
+				i := 1
+			until
+				l_items.off or attached l_greater_than
+			loop
+				if l_items.item_for_iteration > a_candidate_item then
+					l_greater_than := l_items.item_for_iteration
+				else
+					i := i + 1
+				end
+				l_items.forth
+			end
+			check has_item: i <= l_items.count implies attached l_greater_than end
+			if l_items.is_empty implies i = 0 then				-- An empty tree
+				Result := [Current, is_empty_list]				-- add item to empty
+			elseif attached l_greater_than then					-- Found one and ...
+				if i = 1 then
+					Result := [tree (l_greater_than), is_left_child]
+				elseif i > 1 and i < l_items.count then
+					Result := [tree (l_greater_than), is_splice_below_left]
+				elseif i = l_items.count then
+					Result := [tree (l_greater_than), is_right_child]
+				else
+					check unknown_strategy: False end
+				end
+			else
+				check unknown_strategy: False end
+			end
 		ensure
-			valid_node: all_key_hash.has_item (Result.target_node)
-			valid_strategy: insert_strategies.has (Result.strategy_code)
+			valid_node: attached Result implies all_key_hash.has_item (Result.target_node)
+			valid_strategy: attached Result implies insert_strategies.has (Result.strategy_code)
+		end
+
+	tree (v: G): like Current
+		do
+			create Result.make (v)
 		end
 
 feature {TEST_SET_BRIDGE} -- Imp: Constants
 
-	strategy_code_left_child: INTEGER = 1			-- no left-child (is_leaf)
-	strategy_code_right_child: INTEGER = 2			-- no right-child (is_leaf)
-	strategy_code_splice_above: INTEGER = 3			-- between `target_node' and `parent'
-	strategy_code_splice_below_left: INTEGER = 4	-- between `target_node' and `left-child'
-	strategy_code_splice_below_right: INTEGER = 5	-- between `target_node' and `right-child'
+	is_empty_list: INTEGER = 0			-- empty list
+	is_left_child: INTEGER = 1			-- no left-child (is_leaf)
+	is_right_child: INTEGER = 2			-- no right-child (is_leaf)
+	is_splice_above: INTEGER = 3		-- between `target_node' and `parent'
+	is_splice_below_left: INTEGER = 4	-- between `target_node' and `left-child'
+	is_splice_below_right: INTEGER = 5	-- between `target_node' and `right-child'
 
 	insert_strategies: ARRAY [INTEGER]
 		once
 			Result := <<
-						strategy_code_left_child,
-						strategy_code_right_child,
-						strategy_code_splice_above,
-						strategy_code_splice_below_left,
-						strategy_code_splice_below_right
+						is_empty_list,
+						is_left_child,
+						is_right_child,
+						is_splice_above,
+						is_splice_below_left,
+						is_splice_below_right
 						>>
 		end
 
