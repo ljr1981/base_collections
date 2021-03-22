@@ -14,11 +14,16 @@
 		<setting name="console_application" value="true"/>
 		<setting name="total_order_on_reals" value="false"/>
 		<setting name="dead_code_removal" value="feature"/>
-		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf">
+			<class_option class="BINARY_TREE">
+				<warning name="obsolete_feature" value="all"/>
+			</class_option>
+		</library>
 		<library name="diff" location="$ISE_LIBRARY\library\diff\diff.ecf"/>
 		<library name="encoder" location="$ISE_LIBRARY\contrib\library\web\framework\ewf\text\encoder\encoder.ecf"/>
 		<library name="json" location="$ISE_LIBRARY\contrib\library\text\parser\json\library\json.ecf"/>
 		<library name="time" location="$ISE_LIBRARY\library\time\time.ecf"/>
+		<cluster name="docs" location=".\docs\" recursive="true"/>
 		<cluster name="src" location=".\src\" recursive="true"/>
 	</target>
 	<target name="base_collections_tests" extends="base_collections">
