@@ -12,7 +12,7 @@ inherit
 			put as put_binary,
 			replace as replace_binary
 		export
-			{NONE}
+			{ANY}
 				all
 		redefine
 			put_left_child,
