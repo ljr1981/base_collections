@@ -14,6 +14,9 @@ inherit
 		export
 			{NONE}
 				all
+		redefine
+			put_left_child,
+			put_right_child
 		end
 
 create
@@ -32,8 +35,8 @@ feature -- Basic Ops
 	plus alias "+" (v: like Current): like Current
 		do
 			child_put (v.item)
-			across v.keys as ic loop
-				keys.force (v.keys.item_for_iteration, v.keys.key_for_iteration)
+			across v.local_key_hash as ic loop
+				local_key_hash.force (v.local_key_hash.item_for_iteration, v.local_key_hash.key_for_iteration)
 			end
 			Result := Current
 		end
@@ -60,6 +63,24 @@ feature -- Basic Ops
 			end
 		end
 
+	put_left_child (v: like Current)
+			--<Precursor>
+		do
+			Precursor (v)
+			check hashable: attached {HASHABLE} v.item as al_hash then
+				local_key_hash.force (v, al_hash.hash_code)
+			end
+		end
+
+	put_right_child (v: like Current)
+			--<Precursor>
+		do
+			Precursor (v)
+			check hashable: attached {HASHABLE} v.item as al_hash then
+				local_key_hash.force (v, al_hash.hash_code)
+			end
+		end
+
 feature {NONE} -- Imp: Queries
 
 	is_less_and_no_left_child (a_new: G): BOOLEAN
@@ -76,16 +97,85 @@ feature {NONE} -- Imp: Queries
 						not attached right_child
 		end
 
-feature {TREE_MAP} -- Implementation
+feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 
-	keys: HASH_TABLE [G, K]
-			--
+	local_key_hash: HASH_TABLE [like Current, HASHABLE]
+			-- Keys for this node only (root + left + right)
 		attribute
 			create Result.make (count)
 		end
 
+	local_key_value_pairs: ARRAYED_LIST [TUPLE [value: like Current; key: HASHABLE]]
+			-- List of local key:value pairs.
+		do
+			create Result.make (local_key_hash.count)
+			from
+				local_key_hash.start
+			until
+				local_key_hash.off
+			loop
+				Result.force (local_key_hash.item_for_iteration, local_key_hash.key_for_iteration)
+				local_key_hash.forth
+			end
+		end
+
+	all_key_hash: like local_key_hash
+			-- All keys for all nodes and children, recursively.
+		do
+			Result := local_key_hash
+			if attached left_child as al_left_child then
+				across al_left_child.local_key_value_pairs as ic loop
+					Result.force (ic.item.value, ic.item.key)
+				end
+			end
+			if attached right_child as al_right_child then
+				across al_right_child.local_key_value_pairs as ic loop
+					Result.force (ic.item.value, ic.item.key)
+				end
+			end
+		end
+
+	all_items_sorted: PART_SORTED_TWO_WAY_LIST [G]
+			-- A sorted list of all {G} items in Current.
+		do
+			create Result.make
+			across
+				all_key_hash as ic
+			loop
+				Result.put (ic.item.item)
+			end
+		end
+
+	insertion_point (a_candidate_item: G): TUPLE [target_node: like Current; strategy_code: INTEGER]
+		do
+			create Result
+				-- code here for determining `insertion_point' strategy
+		ensure
+			valid_node: all_key_hash.has_item (Result.target_node)
+			valid_strategy: insert_strategies.has (Result.strategy_code)
+		end
+
+feature {TEST_SET_BRIDGE} -- Imp: Constants
+
+	strategy_code_left_child: INTEGER = 1			-- no left-child (is_leaf)
+	strategy_code_right_child: INTEGER = 2			-- no right-child (is_leaf)
+	strategy_code_splice_above: INTEGER = 3			-- between `target_node' and `parent'
+	strategy_code_splice_below_left: INTEGER = 4	-- between `target_node' and `left-child'
+	strategy_code_splice_below_right: INTEGER = 5	-- between `target_node' and `right-child'
+
+	insert_strategies: ARRAY [INTEGER]
+		once
+			Result := <<
+						strategy_code_left_child,
+						strategy_code_right_child,
+						strategy_code_splice_above,
+						strategy_code_splice_below_left,
+						strategy_code_splice_below_right
+						>>
+		end
+
 invariant
-	valid_counts: keys.count = count xor True
+	valid_counts: (all_key_hash.count + 1) = count
 
 note
 	insertion_strategy: "[
