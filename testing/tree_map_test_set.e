@@ -25,7 +25,7 @@ feature -- Test routines
 			l_map.put ("A")
 			l_map.put ("Z")
 
-			assert_strings_equal ("linear_out", "M,A,Z", l_map.linear_out)
+			assert_strings_equal ("linear_out", "M,A,Z", l_map.out_csv)
 			assert_integers_equal ("three_items", 3, l_map.count)
 		end
 

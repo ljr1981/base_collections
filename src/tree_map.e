@@ -69,36 +69,34 @@ feature -- Basic Ops
 					when is_empty_list then
 						do_nothing -- handled in `make'
 					when is_left_child then
-						-- left_child of al_insertion.target_node
 						al_insertion.target_node.put_left_child (al_insertion.child_node)
 					when is_right_child then
-						-- right_child of al_insertion.target_node
 						al_insertion.target_node.put_right_child (al_insertion.child_node)
 					when is_splice_above then
-						-- splice-above al_insertion.target_node
-						check false end
-					when is_splice_below_left then
-						-- splice-below al_insertion.target_node
-						check false end
-					when is_splice_below_right then
-						-- splice-below al_insertion.target_node
-						check false end
+						-- splice_parent_above al_insertion.target_node
+						check this_ought_never_happen: false end
+					when is_splice_left_child then
+						-- splice_left_child of al_insertion.target_node
+						check not_coded_yet: false end
+					when is_splice_right_child then
+						-- splice_right_child of al_insertion.target_node
+						check not_coded_yet: false end
 					else
 						check unknown_strategy_in_put_add: False end
 					end
 				end
---			elseif attached {TO_SPECIAL [G]} v as al_special then -- adding a list of items
---				if attached {ARRAY [G]} al_special as ic then
---					across ic as ic_array loop put (ic_array.item) end
---				elseif attached {ARRAYED_LIST [G]} al_special as ic then
---					across ic as ic_array loop put (ic_array.item) end
---				elseif attached {ARRAYED_STACK [G]} al_special as ic then
---					across ic as ic_array loop put (ic_array.item) end
---				end
---			elseif attached {like Current} v as al_tree_map then -- adding another TREE_MAP to Current
---				plus (al_tree_map).do_nothing
---			else
---				check unknown_type: False end
+			elseif attached {TO_SPECIAL [G]} v as al_special then -- adding a list of items
+				if attached {ARRAY [G]} al_special as ic then
+					across ic as ic_array loop put (ic_array.item) end
+				elseif attached {ARRAYED_LIST [G]} al_special as ic then
+					across ic as ic_array loop put (ic_array.item) end
+				elseif attached {ARRAYED_STACK [G]} al_special as ic then
+					across ic as ic_array loop put (ic_array.item) end
+				end
+			elseif attached {like Current} v as al_tree_map then -- adding another TREE_MAP to Current
+				plus (al_tree_map).do_nothing
+			else
+				check unknown_type: False end
 			end
 		end
 
@@ -128,7 +126,8 @@ feature -- Basic Ops
 
 feature -- Outputs
 
-	linear_out: STRING
+	out_csv: STRING
+			-- Output as CSV
 		do
 			create Result.make_empty
 			across
@@ -142,7 +141,7 @@ feature -- Outputs
 			end
 		end
 
-feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
+feature {TREE_MAP, TEST_SET_BRIDGE} -- Imp: Hashes & Lists
 
 	local_key_hash: HASH_TABLE [like Current, HASHABLE]
 			-- Keys for this node only (root + left + right)
@@ -223,55 +222,70 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 			same_count: count = Result.count
 		end
 
+feature {NONE} -- Imp: Local Insertion Related
+
 	insertion_point (a_candidate_item: G): detachable TUPLE [target_node, child_node: like Current; key: K; strategy_code: INTEGER]
 			-- Where do we insert `a_candidate_item' and what strategy do we use?
 		local
-			l_target_node: like Current
-			l_items: like all_items_sorted
-			l_greater_than: detachable G
-			i: INTEGER
 			l_key: K
+			l_items: like all_items_sorted
+			find_result: like find_greater_than
 		do
-			l_items := all_items_sorted
 			l_key := key_for_item (a_candidate_item)
-			from
-				l_items.start
-				i := 1
-			until
-				l_items.off or attached l_greater_than
-			loop
-				if l_items.item_for_iteration > a_candidate_item then
-					l_greater_than := l_items.item_for_iteration
-				else
-					i := i + 1
-				end
-				l_items.forth
-			end
-			check has_item: i <= l_items.count implies attached l_greater_than end
-			if l_items.is_empty and then i = 0 then				-- An empty tree
-				Result := [Current, tree (a_candidate_item), l_key, is_empty_list]				-- add item to empty
-			elseif attached l_greater_than and then attached {K} l_greater_than as al_key then					-- Found one and ...
-				check attached {like Current} local_key_hash.item (al_key) as al_target_node then
-					l_target_node := al_target_node
-				end
-				if i = 1 then
-					Result := [l_target_node, tree (a_candidate_item), l_key, is_left_child]
-				elseif i > 1 and i < l_items.count then
-					Result := [l_target_node, tree (a_candidate_item), l_key, is_splice_below_left]
-				else
-					check has_greater_but_unknown: False end
-				end
+			l_items := all_items_sorted
+			find_result := find_greater_than (a_candidate_item, l_items)
+			if l_items.is_empty and then find_result.index = 0 then
+				Result := [Current, tree (a_candidate_item), l_key, is_empty_list]
+			elseif attached find_result.greater_than and then
+					attached {K} find_result.greater_than as al_key
+				then
+					if find_result.index = 1 then
+						Result := [target_node_for_key (al_key), tree (a_candidate_item), l_key, is_left_child]
+					elseif (1 |..| l_items.count).has (find_result.index) then
+						Result := [target_node_for_key (al_key), tree (a_candidate_item), l_key, is_splice_left_child]
+					else
+						check has_greater_but_unknown: False end
+					end
 			else
 				check attached {K} l_items.i_th (l_items.count) as al_key and then
-					attached {like Current} local_key_hash.item (al_key) as al_target_node then
-					l_target_node := al_target_node
+						attached {like Current} local_key_hash.item (al_key) as al_target_node
+				then
+					Result := [al_target_node, tree (a_candidate_item), l_key, is_right_child]
 				end
-				Result := [l_target_node, tree (a_candidate_item), l_key, is_right_child]
 			end
 		ensure
 			has_result: attached Result as al_result
 			valid_target_node: local_key_hash.has (al_result.target_node.key)
+			valid_child_node: attached al_result.child_node
 			valid_strategy: insert_strategies.has (al_result.strategy_code)
+		end
+
+	target_node_for_key (a_key: K): like Current
+			-- Give back `target_node_for_key'.
+		do
+			check attached {like Current} local_key_hash.item (a_key) as al_target_node then
+				Result := al_target_node
+			end
+		end
+
+	find_greater_than (v: G; a_items: like all_items_sorted): TUPLE [greater_than: detachable G; index: INTEGER]
+			-- Attempt to `find_result_greater_than' passed `v' argument in `a_items'.
+		do
+			create Result
+			from
+				a_items.start
+				Result.index := 1
+			until
+				a_items.off or attached Result.greater_than
+			loop
+				if a_items.item_for_iteration > v then
+					Result.greater_than := a_items.item_for_iteration
+				else
+					Result.index := Result.index + 1
+				end
+				a_items.forth
+			end
+			check has_item: Result.index <= a_items.count implies attached Result.greater_than end
 		end
 
 	key_for_item (v: G): K
@@ -280,15 +294,17 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 			check is_hashable: attached {K} v as al_key then Result := al_key end
 		end
 
+	tree (v: G): like Current
+		do
+			create Result.make (v)
+		end
+
+feature {TREE_MAP} -- Imp: Access
+
 	key: K
 			-- Computed `key' of `item'
 		do
 			check attached {K} item as al_item then Result := al_item end
-		end
-
-	tree (v: G): like Current
-		do
-			create Result.make (v)
 		end
 
 feature {TEST_SET_BRIDGE} -- Imp: Constants
@@ -297,8 +313,8 @@ feature {TEST_SET_BRIDGE} -- Imp: Constants
 	is_left_child: INTEGER = 1			-- no left-child (is_leaf)
 	is_right_child: INTEGER = 2			-- no right-child (is_leaf)
 	is_splice_above: INTEGER = 3		-- between `target_node' and `parent'
-	is_splice_below_left: INTEGER = 4	-- between `target_node' and `left-child'
-	is_splice_below_right: INTEGER = 5	-- between `target_node' and `right-child'
+	is_splice_left_child: INTEGER = 4	-- between `target_node' and `left-child'
+	is_splice_right_child: INTEGER = 5	-- between `target_node' and `right-child'
 
 	insert_strategies: ARRAY [INTEGER]
 		once
@@ -307,8 +323,8 @@ feature {TEST_SET_BRIDGE} -- Imp: Constants
 						is_left_child,
 						is_right_child,
 						is_splice_above,
-						is_splice_below_left,
-						is_splice_below_right
+						is_splice_left_child,
+						is_splice_right_child
 						>>
 		end
 
