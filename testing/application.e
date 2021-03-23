@@ -9,7 +9,7 @@ class
 create
 	make
 
-feature  -- Initialization
+feature {NONE}  -- Initialization
 
 	make
 			-- Run application.

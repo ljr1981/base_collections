@@ -12,6 +12,23 @@ inherit
 
 feature -- Test routines
 
+	tree_map_insertion_test
+			--
+		note
+			testing:
+				"covers/{TREE_MAP}.make",
+				"covers/{TREE_MAP}.put"
+		local
+			l_map: TREE_MAP [STRING, STRING]
+		do
+			create l_map.make ("M")
+			l_map.put ("A")
+			l_map.put ("Z")
+
+			assert_strings_equal ("linear_out", "M,A,Z", l_map.linear_out)
+			assert_integers_equal ("three_items", 3, l_map.count)
+		end
+
 	tree_map_creation_test
 			-- New test routine
 		note
