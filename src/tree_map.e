@@ -233,9 +233,7 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 			l_key: K
 		do
 			l_items := all_items_sorted
-			check attached {K} a_candidate_item as al_key then
-				l_key := al_key
-			end
+			l_key := key_for_item (a_candidate_item)
 			from
 				l_items.start
 				i := 1
@@ -274,6 +272,12 @@ feature {TREE_MAP, TEST_SET_BRIDGE} -- Implementation
 			has_result: attached Result as al_result
 			valid_target_node: local_key_hash.has (al_result.target_node.key)
 			valid_strategy: insert_strategies.has (al_result.strategy_code)
+		end
+
+	key_for_item (v: G): K
+			-- Give back a key for passed in `v' item.
+		do
+			check is_hashable: attached {K} v as al_key then Result := al_key end
 		end
 
 	key: K
