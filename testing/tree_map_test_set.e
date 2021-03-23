@@ -16,7 +16,9 @@ feature -- Test routines
 			--
 		note
 			testing:
+				"covers/{TREE_MAP}.count",
 				"covers/{TREE_MAP}.make",
+				"covers/{TREE_MAP}.out_csv",
 				"covers/{TREE_MAP}.put"
 		local
 			l_map: TREE_MAP [STRING, STRING]
