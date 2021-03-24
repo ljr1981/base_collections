@@ -14,6 +14,7 @@
 		<setting name="console_application" value="true"/>
 		<setting name="dead_code_removal" value="feature"/>
 		<capability>
+			<concurrency use="none"/>
 			<void_safety use="all"/>
 		</capability>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf">
@@ -23,7 +24,10 @@
 		</library>
 		<library name="diff" location="$ISE_LIBRARY\library\diff\diff.ecf"/>
 		<library name="encoder" location="$ISE_LIBRARY\contrib\library\web\framework\ewf\text\encoder\encoder.ecf"/>
+		<library name="gobo" location="$ISE_LIBRARY\library\gobo\gobo_all.ecf"/>
 		<library name="json" location="$ISE_LIBRARY\contrib\library\text\parser\json\library\json.ecf"/>
+		<library name="kernel" location="$ISE_LIBRARY\contrib\library\gobo\library\kernel\src\library.ecf"/>
+		<library name="structure" location="$ISE_LIBRARY\contrib\library\gobo\library\structure\src\library.ecf"/>
 		<library name="time" location="$ISE_LIBRARY\library\time\time.ecf"/>
 		<cluster name="docs" location=".\docs\" recursive="true"/>
 		<cluster name="src" location=".\src\" recursive="true"/>
