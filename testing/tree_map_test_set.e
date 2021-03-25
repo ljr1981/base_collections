@@ -10,7 +10,7 @@ class
 inherit
 	TEST_SET_SUPPORT
 
-feature -- Test routines
+feature -- Test routines: Basic red-black
 
 	gobo_red_black_tests
 			-- Tests of Java-ish Treemap.
@@ -44,6 +44,8 @@ key is: 70 & Value is: Data3
 
 ]"
 
+feature -- Test routines: entrySet
+
 	tree_map_entry_set_tests
 			--
 		local
@@ -67,6 +69,8 @@ key is: 70 & Value is: Data3
 			end
 			assert_strings_equal ("gobo_red_black_tests_result", gobo_red_black_tests_result, l_print)
 		end
+
+feature -- Test routines: values
 
 	tree_map_values_test
 			--
@@ -100,6 +104,8 @@ Value is: Data3
 
 ]"
 
+feature -- Test routines: descendingKeySet
+
 	descendingKeySet_tests
 			--
 		local
@@ -129,6 +135,41 @@ Key is: 23
 Key is: 4
 Key is: 2
 Key is: 1
+
+]"
+
+feature -- Test routines: descendingMap
+
+	descendingMap_test
+			--
+		local
+			tmap: TREE_MAP [STRING, INTEGER]
+			l_print: STRING
+		do
+			create tmap.make (create {INTEGER_COMPARATOR})
+			tmap.put ("Data1", 1)
+			tmap.put ("Data2", 23)
+			tmap.put ("Data3", 70)
+			tmap.put ("Data4", 4)
+			tmap.put ("Data5", 2)
+
+			across
+				tmap.descendingMap as ic
+			from
+				create l_print.make_empty
+			loop
+				l_print.append_string_general ("key is: " + ic.item.key.out)
+				l_print.append_string_general (" & Value is: " + ic.item.value.out + "%N")
+			end
+			assert_strings_equal ("descendingMap_tests_result", descendingMap_tests_result, l_print)
+		end
+
+		descendingMap_tests_result: STRING = "[
+key is: 70 & Value is: Data3
+key is: 23 & Value is: Data2
+key is: 4 & Value is: Data4
+key is: 2 & Value is: Data5
+key is: 1 & Value is: Data1
 
 ]"
 
