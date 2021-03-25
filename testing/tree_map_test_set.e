@@ -47,6 +47,61 @@ feature -- Test routines
 -- key is: 70 & Value is: Data3
 		end
 
+	tree_map_entry_set_tests
+			--
+		local
+			tmap: TREE_MAP [STRING, INTEGER]
+		do
+			create tmap.make (create {INTEGER_COMPARATOR})
+			tmap.put ("Data1", 1)
+			tmap.put ("Data2", 23)
+			tmap.put ("Data3", 70)
+			tmap.put ("Data4", 4)
+			tmap.put ("Data5", 2)
+
+			across
+				tmap.entrySet as ic
+			loop
+				print ("key is: " + ic.item.key.out)
+				print (" & Value is: " + ic.item.value.out + "%N")
+			end
+
+-- Eiffel OUTPUT:
+-- key is: 1 & Value is: Data1
+-- key is: 2 & Value is: Data5
+-- key is: 4 & Value is: Data4
+-- key is: 23 & Value is: Data2
+-- key is: 70 & Value is: Data3
+
+		end
+
+	tree_map_values_test
+			--
+		local
+			tmap: TREE_MAP [STRING, INTEGER]
+		do
+			create tmap.make (create {INTEGER_COMPARATOR})
+			tmap.put ("Data1", 1)
+			tmap.put ("Data2", 23)
+			tmap.put ("Data3", 70)
+			tmap.put ("Data4", 4)
+			tmap.put ("Data5", 2)
+
+			across
+				tmap.values as ic
+			loop
+				print ("Value is: " + ic.item.out + "%N")
+			end
+
+-- Eiffel OUTPUT:
+-- Value is: Data1
+-- Value is: Data5
+-- Value is: Data4
+-- Value is: Data2
+-- Value is: Data3
+
+		end
+
 note
 	java_code_example: "[
 import java.util.TreeMap;
