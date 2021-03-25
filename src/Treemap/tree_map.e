@@ -29,6 +29,27 @@ feature -- Java-eque Features
 			-- containsKey(Object key) --> boolean
 			-- Returns true if this map contains a mapping for the specified key.
 			-- Eiffel version: `has'
+		note
+			java_api_specification: "[
+			    containsKey
+
+			    public boolean containsKey(Object key)
+
+			    Returns true if this map contains a mapping for the specified key.
+
+			    Specified by:
+			        containsKey in interface Map<K,V>
+			    Overrides:
+			        containsKey in class AbstractMap<K,V>
+			    Parameters:
+			        key - key whose presence in this map is to be tested
+			    Returns:
+			        true if this map contains a mapping for the specified key
+			    Throws:
+			        ClassCastException - 	if the specified key cannot be compared with the keys currently in the map
+			        NullPointerException - 	if the specified key is null and this map uses natural ordering, or
+			        							its comparator does not permit null keys
+				]"
 		do
 			Result := has (a_key)
 		ensure
@@ -47,6 +68,36 @@ feature -- Java-eque Features
 				Eiffel's Void-safety gives it the quality of being much more precise.
 				This code water's that down to behave like Java. This puts the onus on
 				the programmer to do a Void-safety check after rather than before.
+				]"
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#get"
+			java_api_specification: "[
+			    get
+
+			    public V get(Object key)
+
+			    Returns the value to which the specified key is mapped, or null if this map contains no
+			    mapping for the key.
+
+			    More formally, if this map contains a mapping from a key k to a value v such that key
+			    compares equal to k according to the map's ordering, then this method returns v; otherwise
+			    it returns null. (There can be at most one such mapping.)
+
+			    A return value of null does not necessarily indicate that the map contains no mapping
+			    for the key; it's also possible that the map explicitly maps the key to null. The containsKey
+			    operation may be used to distinguish these two cases.
+
+			    Specified by:
+			        get in interface Map<K,V>
+			    Overrides:
+			        get in class AbstractMap<K,V>
+			    Parameters:
+			        key - the key whose associated value is to be returned
+			    Returns:
+			        the value to which the specified key is mapped, or null if this map contains no mapping for the key
+			    Throws:
+			        ClassCastException - 	if the specified key cannot be compared with the keys currently in the map
+			        NullPointerException - 	if the specified key is null and this map uses natural ordering, or
+			        							its comparator does not permit null keys
 				]"
 		do
 			if has (a_key) then
@@ -67,6 +118,7 @@ feature -- Java-eque Features
 				So, we are forced to create one. it's not difficult, but it does have to
 				be built to meet the java-esque API.
 				]"
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#keySet"
 			java_api_specification: "[
 			    keySet
 
@@ -107,6 +159,7 @@ feature -- Java-eque Features
 	entrySet, entry_set: ARRAYED_LIST [TUPLE [key: K; value: V]]
 			--
 		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#entrySet"
 			java_api_spec: "[
 				public Set<Map.Entry<K,V>> entrySet()
 
@@ -150,6 +203,7 @@ feature -- Java-eque Features
 			-- size() --> int
 			-- Returns the number of key-value mappings in this map.
 		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#size"
 			java_api_spec: "[
 			    size
 
@@ -172,6 +226,7 @@ feature -- Java-eque Features
 
 	values: ARRAYED_LIST [V]
 		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#values"
 			java_api_specification: "[
 				public Collection<V> values()
 
@@ -211,6 +266,7 @@ feature -- Java-eque Features
 			-- descendingKeySet() --> NavigableSet<K> 	
 			-- Returns a reverse order NavigableSet view of the keys contained in this map.
 		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#descendingKeySet"
 			java_api_specification: "[
 			    descendingKeySet
 
@@ -242,6 +298,7 @@ feature -- Java-eque Features
 			-- descendingMap() --> NavigableMap<K,V>
 			-- Returns a reverse order view of the mappings contained in this map.
 		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#descendingMap"
 			java_api_specification: "[
 			    descendingMap
 
