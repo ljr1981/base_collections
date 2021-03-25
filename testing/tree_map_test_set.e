@@ -171,6 +171,7 @@ feature -- Test routines: Output
 feature {NONE} -- Imp: Test Objects
 
 	tmap_object: TREE_MAP [STRING, INTEGER]
+			-- Creation of a {TREE_MAP} object for testing.
 		do
 			create Result
 			Result.put ("Data1", 1)
