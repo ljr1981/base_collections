@@ -27,7 +27,8 @@ feature -- Test routines
 			tmap.put ("Data5", 2)
 
 			from tmap.start until tmap.off loop
-				print ("key is: " + tmap.key_for_iteration.out + " & Value is: " + tmap.item_for_iteration.out + "%N")
+				print ("key is: " + tmap.key_for_iteration.out)
+				print (" & Value is: " + tmap.item_for_iteration.out + "%N")
 				tmap.forth
 			end
 
@@ -44,8 +45,6 @@ feature -- Test routines
 -- key is: 4 & Value is: Data4
 -- key is: 23 & Value is: Data2
 -- key is: 70 & Value is: Data3
-
-			assert ("false", False)
 		end
 
 note
