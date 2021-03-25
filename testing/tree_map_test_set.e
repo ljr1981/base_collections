@@ -18,6 +18,7 @@ feature -- Test routines
 			EIS: "name=java_comparison_code", "src=https://beginnersbook.com/2013/12/treemap-in-java-with-example/"
 		local
 			tmap: TREE_MAP [STRING, INTEGER]
+			l_print: STRING
 		do
 			create tmap.make (create {INTEGER_COMPARATOR})
 			tmap.put ("Data1", 1)
@@ -26,31 +27,28 @@ feature -- Test routines
 			tmap.put ("Data4", 4)
 			tmap.put ("Data5", 2)
 
-			from tmap.start until tmap.off loop
-				print ("key is: " + tmap.key_for_iteration.out)
-				print (" & Value is: " + tmap.item_for_iteration.out + "%N")
+			from tmap.start; create l_print.make_empty until tmap.off loop
+				l_print.append_string_general ("key is: " + tmap.key_for_iteration.out)
+				l_print.append_string_general (" & Value is: " + tmap.item_for_iteration.out + "%N")
 				tmap.forth
 			end
-
--- Eiffel OUTPUT:
--- key is: 1 & Value is: Data1
--- key is: 2 & Value is: Data5
--- key is: 4 & Value is: Data4
--- key is: 23 & Value is: Data2
--- key is: 70 & Value is: Data3
-
--- Vs Java output:
--- key is: 1 & Value is: Data1
--- key is: 2 & Value is: Data5
--- key is: 4 & Value is: Data4
--- key is: 23 & Value is: Data2
--- key is: 70 & Value is: Data3
+			assert_strings_equal ("gobo_red_black_tests_result", gobo_red_black_tests_result, l_print)
 		end
+
+	gobo_red_black_tests_result: STRING = "[
+key is: 1 & Value is: Data1
+key is: 2 & Value is: Data5
+key is: 4 & Value is: Data4
+key is: 23 & Value is: Data2
+key is: 70 & Value is: Data3
+
+]"
 
 	tree_map_entry_set_tests
 			--
 		local
 			tmap: TREE_MAP [STRING, INTEGER]
+			l_print: STRING
 		do
 			create tmap.make (create {INTEGER_COMPARATOR})
 			tmap.put ("Data1", 1)
@@ -61,24 +59,20 @@ feature -- Test routines
 
 			across
 				tmap.entrySet as ic
+			from
+				create l_print.make_empty
 			loop
-				print ("key is: " + ic.item.key.out)
-				print (" & Value is: " + ic.item.value.out + "%N")
+				l_print.append_string_general ("key is: " + ic.item.key.out)
+				l_print.append_string_general (" & Value is: " + ic.item.value.out + "%N")
 			end
-
--- Eiffel OUTPUT:
--- key is: 1 & Value is: Data1
--- key is: 2 & Value is: Data5
--- key is: 4 & Value is: Data4
--- key is: 23 & Value is: Data2
--- key is: 70 & Value is: Data3
-
+			assert_strings_equal ("gobo_red_black_tests_result", gobo_red_black_tests_result, l_print)
 		end
 
 	tree_map_values_test
 			--
 		local
 			tmap: TREE_MAP [STRING, INTEGER]
+			l_print: STRING
 		do
 			create tmap.make (create {INTEGER_COMPARATOR})
 			tmap.put ("Data1", 1)
@@ -89,18 +83,22 @@ feature -- Test routines
 
 			across
 				tmap.values as ic
+			from
+				create l_print.make_empty
 			loop
-				print ("Value is: " + ic.item.out + "%N")
+				l_print.append_string_general ("Value is: " + ic.item.out + "%N")
 			end
-
--- Eiffel OUTPUT:
--- Value is: Data1
--- Value is: Data5
--- Value is: Data4
--- Value is: Data2
--- Value is: Data3
-
+			assert_strings_equal ("tree_map_values_test_result", tree_map_values_test_result, l_print)
 		end
+
+	tree_map_values_test_result: STRING = "[
+Value is: Data1
+Value is: Data5
+Value is: Data4
+Value is: Data2
+Value is: Data3
+
+]"
 
 note
 	java_code_example: "[
