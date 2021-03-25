@@ -30,6 +30,7 @@ feature -- Java-eque Features
 			-- Returns true if this map contains a mapping for the specified key.
 			-- Eiffel version: `has'
 		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#containsKey"
 			java_api_specification: "[
 			    containsKey
 
