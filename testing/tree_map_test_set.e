@@ -20,12 +20,7 @@ feature -- Test routines: Basic red-black
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap
-			tmap.put ("Data1", 1)
-			tmap.put ("Data2", 23)
-			tmap.put ("Data3", 70)
-			tmap.put ("Data4", 4)
-			tmap.put ("Data5", 2)
+			tmap := tmap_object
 
 			from tmap.start; create l_print.make_empty until tmap.off loop
 				l_print.append_string_general ("key is: " + tmap.key_for_iteration.out)
@@ -52,12 +47,7 @@ feature -- Test routines: entrySet
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap
-			tmap.put ("Data1", 1)
-			tmap.put ("Data2", 23)
-			tmap.put ("Data3", 70)
-			tmap.put ("Data4", 4)
-			tmap.put ("Data5", 2)
+			tmap := tmap_object
 
 			across
 				tmap.entrySet as ic
@@ -78,12 +68,7 @@ feature -- Test routines: values
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap
-			tmap.put ("Data1", 1)
-			tmap.put ("Data2", 23)
-			tmap.put ("Data3", 70)
-			tmap.put ("Data4", 4)
-			tmap.put ("Data5", 2)
+			tmap := tmap_object
 
 			across
 				tmap.values as ic
@@ -112,12 +97,7 @@ feature -- Test routines: descendingKeySet
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap
-			tmap.put ("Data1", 1)
-			tmap.put ("Data2", 23)
-			tmap.put ("Data3", 70)
-			tmap.put ("Data4", 4)
-			tmap.put ("Data5", 2)
+			tmap := tmap_object
 
 			across
 				tmap.descendingKeySet as ic
@@ -146,12 +126,7 @@ feature -- Test routines: descendingMap
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap
-			tmap.put ("Data1", 1)
-			tmap.put ("Data2", 23)
-			tmap.put ("Data3", 70)
-			tmap.put ("Data4", 4)
-			tmap.put ("Data5", 2)
+			tmap := tmap_object
 
 			across
 				tmap.descendingMap as ic
@@ -172,6 +147,38 @@ key is: 2 & Value is: Data5
 key is: 1 & Value is: Data1
 
 ]"
+
+feature -- Test routines: Output
+
+	csv_out_test
+			--
+		local
+			tmap: TREE_MAP [STRING, INTEGER]
+			l_print: STRING
+		do
+			tmap := tmap_object
+			assert_strings_equal ("csv_out_test_result", csv_out_test_result, tmap.csv_out)
+		end
+
+	csv_out_test_result: STRING = "[
+1,Data1
+2,Data5
+4,Data4
+23,Data2
+70,Data3
+]"
+
+feature {NONE} -- Imp: Test Objects
+
+	tmap_object: TREE_MAP [STRING, INTEGER]
+		do
+			create Result
+			Result.put ("Data1", 1)
+			Result.put ("Data2", 23)
+			Result.put ("Data3", 70)
+			Result.put ("Data4", 4)
+			Result.put ("Data5", 2)
+		end
 
 note
 	java_code_example: "[

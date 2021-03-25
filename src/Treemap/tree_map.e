@@ -339,4 +339,21 @@ feature -- Java-eque Features: Descending Versions
 			end
 		end
 
+feature -- Output
+
+	csv_out: STRING
+			-- Output of Current as CSV.
+		do
+			create Result.make_empty
+			across
+				entry_set as ic
+			loop
+				Result.append_string_general (ic.item.key.out + "," + ic.item.value.out)
+				Result.append_character ('%N')
+			end
+			if not Result.is_empty then
+				Result.remove_tail (1)
+			end
+		end
+
 end
