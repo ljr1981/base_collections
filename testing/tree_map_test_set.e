@@ -58,11 +58,9 @@ public class Details {
 
    public static void main(String args[]) {
 
-      /* This is how to declare TreeMap */
-      TreeMap<Integer, String> tmap = 
-             new TreeMap<Integer, String>();
+      TreeMap<Integer, String> tmap =
+      	new TreeMap<Integer, String>();
 
-      /*Adding elements to TreeMap*/
       tmap.put(1, "Data1");
       tmap.put(23, "Data2");
       tmap.put(70, "Data3");

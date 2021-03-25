@@ -10,4 +10,42 @@ inherit
 create
 	make
 
+feature -- Temporary
+
+	containsKey, contains_key
+		do
+
+		end
+
+	get
+		do
+
+		end
+
+	keySet, key_set
+		do
+
+		end
+
+	entrySet, entry_set
+		do
+
+		end
+
+--	put
+--		do
+
+--		end
+
+	size
+		do
+
+		end
+
+	values
+		do
+
+		end
+
+
 end
