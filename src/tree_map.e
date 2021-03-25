@@ -18,6 +18,8 @@ feature -- Temporary
 			-- Eiffel version: `has'
 		do
 			Result := has (a_key)
+		ensure
+			valid: Result and then has (a_key)
 		end
 
 	get (a_key: K): detachable V
@@ -37,6 +39,10 @@ feature -- Temporary
 			if has (a_key) then
 				Result := item (a_key)
 			end
+		ensure
+			valid: attached Result implies
+					attached item (a_key) and then
+					has (a_key)
 		end
 
 	keySet, key_set: ARRAYED_LIST [K]
@@ -49,8 +55,8 @@ feature -- Temporary
 				be built to meet the java-esque API.
 				]"
 		do
-			create Result.make (count)
 			from
+				create Result.make (count)
 				start
 			until
 				off
@@ -58,6 +64,8 @@ feature -- Temporary
 				Result.force (key_for_iteration)
 				forth
 			end
+		ensure
+			all_here: across Result as ic all has (ic.item) end
 		end
 
 	entrySet, entry_set: ARRAYED_LIST [TUPLE [key: K; value: V]]
@@ -86,8 +94,8 @@ feature -- Temporary
 				    a set view of the mappings contained in this map
 				]"
 		do
-			create Result.make (count)
 			from
+				create Result.make (count)
 				start
 			until
 				off
@@ -95,6 +103,11 @@ feature -- Temporary
 				Result.force ([key_for_iteration, item_for_iteration])
 				forth
 			end
+		ensure
+			all_here: across Result as ic all
+								has (ic.item.key) and then
+								attached values.has (ic.item.value)
+						end
 		end
 
 	size: INTEGER
@@ -117,6 +130,8 @@ feature -- Temporary
 				]"
 		do
 			Result := count
+		ensure
+			same: Result = count
 		end
 
 	values: ARRAYED_LIST [V]
@@ -143,8 +158,8 @@ feature -- Temporary
 				    a collection view of the values contained in this map
 				]"
 		do
-			create Result.make (count)
 			from
+				create Result.make (count)
 				start
 			until
 				off
@@ -152,6 +167,8 @@ feature -- Temporary
 				Result.force (item_for_iteration)
 				forth
 			end
+		ensure
+			same_count: Result.count = count
 		end
 
 	descendingKeySet, descending_key_set: ARRAYED_LIST [K]
@@ -174,12 +191,15 @@ feature -- Temporary
 			        1.6
 				]"
 		do
-			create Result.make (count)
 			across
 				keySet.new_cursor.reversed as ic
+			from
+				create Result.make (count)
 			loop
 				Result.force (ic.item)
 			end
+		ensure
+			same_count: Result.count = count
 		end
 
 	descendingMap, descending_map: ARRAYED_LIST [TUPLE [key: K; value: V]]
