@@ -20,7 +20,7 @@ feature -- Test routines: Basic red-black
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap.make (create {INTEGER_COMPARATOR})
+			create tmap
 			tmap.put ("Data1", 1)
 			tmap.put ("Data2", 23)
 			tmap.put ("Data3", 70)
@@ -52,7 +52,7 @@ feature -- Test routines: entrySet
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap.make (create {INTEGER_COMPARATOR})
+			create tmap
 			tmap.put ("Data1", 1)
 			tmap.put ("Data2", 23)
 			tmap.put ("Data3", 70)
@@ -78,7 +78,7 @@ feature -- Test routines: values
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap.make (create {INTEGER_COMPARATOR})
+			create tmap
 			tmap.put ("Data1", 1)
 			tmap.put ("Data2", 23)
 			tmap.put ("Data3", 70)
@@ -112,7 +112,7 @@ feature -- Test routines: descendingKeySet
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap.make (create {INTEGER_COMPARATOR})
+			create tmap
 			tmap.put ("Data1", 1)
 			tmap.put ("Data2", 23)
 			tmap.put ("Data3", 70)
@@ -146,7 +146,7 @@ feature -- Test routines: descendingMap
 			tmap: TREE_MAP [STRING, INTEGER]
 			l_print: STRING
 		do
-			create tmap.make (create {INTEGER_COMPARATOR})
+			create tmap
 			tmap.put ("Data1", 1)
 			tmap.put ("Data2", 23)
 			tmap.put ("Data3", 70)

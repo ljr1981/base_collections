@@ -6,11 +6,23 @@ class
 
 inherit
 	DS_RED_BLACK_TREE [V, K]
+		redefine
+			default_create
+		end
 
 create
+	default_create,
 	make
 
-feature -- Temporary
+feature {NONE} -- Initialization
+
+	default_create
+			--<Precursor>
+		do
+			make (create {COMPARABLE_COMPARATOR [K]})
+		end
+
+feature -- Java-eque Features
 
 	containsKey, contains_key (a_key: K): BOOLEAN
 			-- containsKey(Object key) --> boolean
