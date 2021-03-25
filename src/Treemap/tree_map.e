@@ -23,7 +23,7 @@ feature {NONE} -- Initialization
 			make (create {COMPARABLE_COMPARATOR [K]})
 		end
 
-feature -- Java-eque Features
+feature -- Java-eque Features: Queries
 
 	containsKey, contains_key (a_key: K): BOOLEAN
 			-- containsKey(Object key) --> boolean
@@ -109,6 +109,35 @@ feature -- Java-eque Features
 					attached item (a_key) and then
 					has (a_key)
 		end
+
+feature -- Java-eque Features: Status Report
+
+	size: INTEGER
+			-- size() --> int
+			-- Returns the number of key-value mappings in this map.
+		note
+			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#size"
+			java_api_spec: "[
+			    size
+
+			    public int size()
+
+			    Returns the number of key-value mappings in this map.
+
+			    Specified by:
+			        size in interface Map<K,V>
+			    Overrides:
+			        size in class AbstractMap<K,V>
+			    Returns:
+			        the number of key-value mappings in this map
+				]"
+		do
+			Result := count
+		ensure
+			same: Result = count
+		end
+
+feature -- Java-eque Features: Ascending Versions
 
 	keySet, key_set: ARRAYED_LIST [K]
 			-- Set<K> 	keySet()
@@ -200,31 +229,6 @@ feature -- Java-eque Features
 						end
 		end
 
-	size: INTEGER
-			-- size() --> int
-			-- Returns the number of key-value mappings in this map.
-		note
-			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#size"
-			java_api_spec: "[
-			    size
-
-			    public int size()
-
-			    Returns the number of key-value mappings in this map.
-
-			    Specified by:
-			        size in interface Map<K,V>
-			    Overrides:
-			        size in class AbstractMap<K,V>
-			    Returns:
-			        the number of key-value mappings in this map
-				]"
-		do
-			Result := count
-		ensure
-			same: Result = count
-		end
-
 	values: ARRAYED_LIST [V]
 		note
 			EIS: "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html#values"
@@ -262,6 +266,8 @@ feature -- Java-eque Features
 		ensure
 			same_count: Result.count = count
 		end
+
+feature -- Java-eque Features: Descending Versions
 
 	descendingKeySet, descending_key_set: ARRAYED_LIST [K]
 			-- descendingKeySet() --> NavigableSet<K> 	
