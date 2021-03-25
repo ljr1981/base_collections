@@ -100,6 +100,38 @@ Value is: Data3
 
 ]"
 
+	descendingKeySet_tests
+			--
+		local
+			tmap: TREE_MAP [STRING, INTEGER]
+			l_print: STRING
+		do
+			create tmap.make (create {INTEGER_COMPARATOR})
+			tmap.put ("Data1", 1)
+			tmap.put ("Data2", 23)
+			tmap.put ("Data3", 70)
+			tmap.put ("Data4", 4)
+			tmap.put ("Data5", 2)
+
+			across
+				tmap.descendingKeySet as ic
+			from
+				create l_print.make_empty
+			loop
+				l_print.append_string_general ("Key is: " + ic.item.out + "%N")
+			end
+			assert_strings_equal ("descendingKeySet_tests_result", descendingKeySet_tests_result, l_print)
+		end
+
+		descendingKeySet_tests_result: STRING = "[
+Key is: 70
+Key is: 23
+Key is: 4
+Key is: 2
+Key is: 1
+
+]"
+
 note
 	java_code_example: "[
 import java.util.TreeMap;
