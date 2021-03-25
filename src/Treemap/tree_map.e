@@ -1,5 +1,6 @@
 note
 	description: "Treemap modelled after Java."
+	EIS: "name=treemap_java_spec", "src=https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html"
 
 class
 	TREE_MAP [V -> HASHABLE, K -> COMPARABLE]
@@ -65,6 +66,29 @@ feature -- Java-eque Features
 				In this case, Eiffel does not have a corresponding exported API feature.
 				So, we are forced to create one. it's not difficult, but it does have to
 				be built to meet the java-esque API.
+				]"
+			java_api_specification: "[
+			    keySet
+
+			    public Set<K> keySet()
+
+			    Returns a Set view of the keys contained in this map. The set's iterator returns the keys
+			    in ascending order. The set is backed by the map, so changes to the map are reflected in
+			    the set, and vice-versa. If the map is modified while an iteration over the set is in
+
+			    progress (except through the iterator's own remove operation), the results of the iteration
+			    are undefined. The set supports element removal, which removes the corresponding mapping f
+			    rom the map, via the Iterator.remove, Set.remove, removeAll, retainAll, and clear operations.
+			    It does not support the add or addAll operations.
+
+			    Specified by:
+			        keySet in interface Map<K,V>
+			    Specified by:
+			        keySet in interface SortedMap<K,V>
+			    Overrides:
+			        keySet in class AbstractMap<K,V>
+			    Returns:
+			        a set view of the keys contained in this map
 				]"
 		do
 			from
