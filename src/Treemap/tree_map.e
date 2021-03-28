@@ -23,6 +23,29 @@ feature {NONE} -- Initialization
 			make (create {COMPARABLE_COMPARATOR [K]})
 		end
 
+feature -- Pure Eiffel
+
+	remove_by_value (v: V)
+			-- Remove item with value of `v'.
+		require
+			has_v: values.has (v)
+		local
+			l_stop: BOOLEAN
+		do
+			across
+				entry_set as ic
+			until
+				l_stop
+			loop
+				if ic.item.value = v then
+					remove (ic.item.key)
+					l_stop := True
+				end
+			end
+		ensure
+			removed: not values.has (v)
+		end
+
 feature -- Java-eque Features: Queries
 
 	containsKey, contains_key (a_key: K): BOOLEAN
